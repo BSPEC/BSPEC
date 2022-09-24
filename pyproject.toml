@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "BSPEC"
+version = "0.0.1"
+authors = [
+  { name="Ryan Julyan", email="ryan@julyan.biz" },
+]
+description = "A small example package"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: Customized :: Derived from Apache License, Version 2.0",
+    "Operating System :: OS Independent",
+]
+keywords = ["ECS", "Plugin", "Dynamic", "Dynamic"]
+dependencies = [
+    "esper >= 2.1",
+]
+
+[project.optional-dependencies]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "build", "twine"]
+
+[tool.bumpver]
+current_version = "0.0.1"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message  = "Bump version {old_version} -> {new_version}"
+commit          = true
+tag             = true
+push            = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
+"src/bspec/__init__.py" = ["{version}"]
+
+[project.urls]
+"Homepage" = "https://github.com/BSPEC/BSPEC"
+"Bug Tracker" = "https://github.com/BSPEC/BSPEC/issues"
+
+[project.scripts]
+realpython = "reader.__main__:main"
