@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "BSPEC"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Ryan Julyan", email="ryan@julyan.biz" },
 ]
-description = "A small example package"
+description = "A python based Plugin, Entity Component System (ECS) architecture designed with Business Specifications in mind. This package allows you to easily set up and use existing systems and components."
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.9"
@@ -32,10 +32,10 @@ dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "build", "twine"]
 "Bug Tracker" = "https://github.com/BSPEC/BSPEC/issues"
 
 [project.scripts]
-realpython = "reader.__main__:main"
+bspec = "bspec.__main__:main"
 
 [tool.bumpver]
-current_version = "0.1.0"
+current_version = "0.1.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true

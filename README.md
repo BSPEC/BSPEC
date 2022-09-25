@@ -2,7 +2,6 @@
 > BSPEC: A python based Plugin, Entity Component System (ECS) architecture designed with Business Specifications in mind. This package allows you to easily set up and use existing systems and components. Write custom systems and components that can be dynamically loaded. Its minimal dependencies and extensions make it ideal for projects that use Python 3.
 
 # Status of the project
-> Current version: `0.0.1`
 
 The BSPEC is still under initial development and is being tested with the Python 3.9.6 version.
 
