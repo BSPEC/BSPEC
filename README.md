@@ -5,11 +5,12 @@
 
 The BSPEC is still under initial development and is being tested with the Python 3.9.6 version.
 
-The BSPEC will follow semantic versioning for its releases, with a `{MAJOR}.{MINOR}.{PATCH}` scheme for versions numbers, where:
+The BSPEC will follow semantic versioning for its releases, with a `{MAJOR}.{MINOR}.{PATCH}{PYTAGNUM}` scheme for versions numbers, where:
 
 * `MAJOR` versions might introduce breaking changes
 * `MINOR` versions usually introduce new features and might introduce deprecations
 * `PATCH` versions only introduce bug fixes
+* `PYTAGNUM` PYTAG + NUM (no white-space in between), Tags are converted to a short form (-alpha -> a0)
 
 # Overview
 * [Status of the project](#status-of-the-project)
