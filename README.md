@@ -101,5 +101,25 @@ bumpver update --minor
 bumpver update --minor
 
 ```
+>**Note:** BumpVer integrates with your version control system. It’ll refuse to update your files if you have uncommitted changes in your repository.
 
-you can change different versions
+
+You can change different versions with different key words:
+> **Note:** `test` lets you see what the changes to a given version string would look like
+```shell
+bumpver test '1.2.3' 'MAJOR.MINOR.PATCH[PYTAGNUM]' --major
+New Version: 2.0.0
+
+bumpver test '1.2.3' 'MAJOR.MINOR.PATCH[PYTAGNUM]' --minor
+New Version: 1.3.0
+
+bumpver test '1.2.3' 'MAJOR.MINOR.PATCH[PYTAGNUM]' --patch
+New Version: 1.2.4
+
+bumpver test '1.2.3' 'MAJOR.MINOR.PATCH[PYTAGNUM]' --patch --tag=beta
+New Version: 1.2.4b0
+
+bumpver test '1.2.4b0' 'MAJOR.MINOR.PATCH[PYTAGNUM]' --tag-num
+New Version: 1.2.4b1
+```
+
