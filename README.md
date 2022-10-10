@@ -82,3 +82,24 @@ pip install BSPEC
 pip install BSPEC
 
 ```
+
+
+## Changes to Repo
+
+### Windows
+* Open new terminal
+    * "Windows-Key + R" will show you the 'RUN' box
+    * Type "cmd" to open the terminal
+```shell
+bumpver update --minor
+
+```
+### Linux / Mac
+* Open new terminal
+    * "Control + Option + Shift + T" to open the terminal
+```shell
+bumpver update --minor
+
+```
+
+you can change different versions
