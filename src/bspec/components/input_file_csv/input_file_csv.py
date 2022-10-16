@@ -1,5 +1,6 @@
 import sys
 import os.path
+import os
 from dataclasses import dataclass as component
 from collections import (
     defaultdict,
@@ -12,26 +13,13 @@ from typing import (
     TypeVar,
     Union,
 )
+import csv
 
 from deprecated.sphinx import versionadded
-from pandas._typing import (
-    CompressionOptions,
-    CSVEngine,
-    CSVQuoting,
-    DtypeArg,
-    FilePath,
-    ReadCsvBuffer,
-    StorageOptions,
-    npt,
-)
-from pandas.core.indexes.base import Index
-from pandas.core.series import Series
 
 from components import component_factory
 from common_core.read_module_requirements import read_module_requirements
 from common_core.dynamic_module_install import dynamic_module_install
-
-PandasDataFrame = TypeVar("pandas.core.frame.DataFrame")
 
 ###########################################################################
 #  Load System Modules module_requirements.txt to support dynamic import: #
@@ -46,14 +34,26 @@ else:
 requirements_path = os.path.join(BASE_DIR, "requirements/module_requirements.txt")
 requirements_dict = read_module_requirements(requirements_path)
 
-####################################
-#  Import Required System Modules: #
-####################################
+#######################################
+#  Import Required Component Modules: #
+#######################################
 try:
     import pandas as pd  # noqa: E402
 except ImportError:
     module_name = "pandas"
     dynamic_module_install(module_name, requirements_dict)
+
+
+from pandas._typing import (
+    CompressionOptions,
+    DtypeArg,
+    StorageOptions,
+)
+from pandas.core.indexes.base import Index
+from pandas.core.series import Series
+
+
+PandasDataFrame = TypeVar("pandas.core.frame.DataFrame")
 
 #########################################
 #  Define some PD_DataFrames Component: #
@@ -75,16 +75,13 @@ class Input_File_CSV:
                 By file-like object, we refer to objects with a read() method, such as a file handle
                 (e.g. via builtin open function) or StringIO.
 
-        sep (str, default ','):
+        delimiter (str, default ','):
                 Delimiter to use. If sep is None, the C engine cannot automatically detect the separator,
                 but the Python parsing engine can, meaning the latter will be used and automatically
                 detect the separator by Python's builtin sniffer tool, csv.Sniffer.
                 In addition, separators longer than 1 character and different from '\s+' will be interpreted
                 as regular expressions and will also force the use of the Python parsing engine.
                 Note that regex delimiters are prone to ignoring quoted data. Regex example: '\r\t'.
-
-        delimiter (str, default None):
-                Alias for sep.
 
         header (int, list of int, None, default 'infer'):
                 Row number(s) to use as the column names, and the start of the data. Default behavior is
@@ -310,11 +307,6 @@ class Input_File_CSV:
                 * 'warn', raise a warning when a bad line is encountered and skip that line.
                 * 'skip', skip bad lines without raising or warning when they are encountered.
 
-        delim_whitespace (bool, default False):
-                Specifies whether or not whitespace (e.g. ' ' or '    ') will be used as the sep.
-                Equivalent to setting sep='\s+'. If this option is set to True, nothing should be passed in for
-                the delimiter parameter.
-
         low_memory (bool, default True):
                 Internally process the file in chunks, resulting in lower memory use while parsing, but possibly
                 mixed type inference. To ensure no mixed types either set False, or specify the type with the
@@ -338,70 +330,67 @@ class Input_File_CSV:
                 fsspec.open. Please see fsspec and urllib for more details, and for more examples on storage options refer here.
     """
 
-    filepath_or_buffer: Union[FilePath, ReadCsvBuffer[bytes], ReadCsvBuffer[str]]
-    sep: Union[str, None] = ...
-    delimiter: Union[str, None] = ...
-    header: Union[int, Sequence[int], Literal["infer"], None] = ...
-    names: Union[list[str], None] = ...
-    index_col: Union[int, str, Sequence[str, int], Literal[False], None] = ...
+    filepath_or_buffer: Union[str, os.PathLike[str]]
+    delimiter: Union[str, None] = None
+    header: Union[int, Sequence[int], Literal["infer"], None] = None
+    names: Union[list[str], None] = None
+    index_col: Union[int, str, Sequence[Union[str, int]], Literal[False], None] = None
     usecols: Union[
         list[str],
         tuple[str, ...],
         Sequence[int],
         Series,
         Index,
-        npt.NDArray,
         Callable[[str], bool],
         None,
-    ] = ...
-    dtype: Union[DtypeArg, defaultdict, None] = ...
-    engine: Union[CSVEngine, None] = ...
-    converters: dict[Union[int, str], Callable[[str], Any]] = ...
-    true_values: list[str] = ...
-    false_values: list[str] = ...
-    skipinitialspace: bool = ...
-    skiprows: Union[int, Sequence[int], Callable[[int], bool]] = ...
-    skipfooter: int = ...
-    nrows: Union[int, None] = ...
-    na_values: Union[Sequence[str], dict[str, Sequence[str]]] = ...
-    keep_default_na: bool = ...
-    na_filter: bool = ...
-    verbose: bool = ...
-    skip_blank_lines: bool = ...
+    ] = None
+    dtype: Union[DtypeArg, defaultdict, None] = None
+    engine: Union[Literal["c", "python", "pyarrow", "python-fwf"], None] = "python"
+    converters: dict[Union[int, str], Callable[[str], Any]] = None
+    true_values: list[str] = None
+    false_values: list[str] = None
+    skipinitialspace: bool = None
+    skiprows: Union[int, Sequence[int], Callable[[int], bool]] = None
+    skipfooter: int = 0
+    nrows: Union[int, None] = None
+    na_values: Union[Sequence[str], dict[str, Sequence[str]]] = None
+    keep_default_na: bool = None
+    na_filter: bool = False
+    verbose: bool = False
+    skip_blank_lines: bool = True
     parse_dates: Union[
         bool,
         Sequence[int],
         list[str],
         Sequence[Sequence[int]],
         dict[str, Sequence[int]],
-    ] = ...
-    infer_datetime_format: bool = ...
-    keep_date_col: bool = ...
-    date_parser: Callable = ...
-    dayfirst: bool = ...
-    cache_dates: bool = ...
-    iterator: Literal[True] = ...
-    chunksize: Union[int, None] = ...
-    compression: CompressionOptions = ...
-    thousands: Union[str, None] = ...
-    decimal: str = ...
-    lineterminator: Union[str, None] = ...
-    quotechar: str = ...
-    quoting: CSVQuoting = ...
-    doublequote: bool = ...
-    escapechar: Union[str, None] = ...
-    comment: Union[str, None] = ...
-    encoding: Union[str, None] = ...
-    encoding_errors: Union[str, None] = ...
-    dialect: Union[str, csv.Dialect] = ...
+    ] = True
+    infer_datetime_format: bool = True
+    keep_date_col: bool = True
+    date_parser: Callable = None
+    dayfirst: bool = False
+    cache_dates: bool = True
+    iterator: Literal[True] = True
+    chunksize: Union[int, None] = None
+    compression: CompressionOptions = None
+    thousands: Union[str, None] = None
+    decimal: str = "."
+    lineterminator: Union[str, None] = None
+    quotechar: str = '"'
+    quoting: Literal[0, 1, 2, 3] = 0
+    doublequote: bool = True
+    escapechar: Union[str, None] = None
+    comment: Union[str, None] = None
+    encoding: Union[str, None] = None
+    encoding_errors: Union[str, None] = None
+    dialect: Union[str, csv.Dialect] = None
+    float_precision: Union[Literal["high", "legacy", "round_trip"], None] = None
+    storage_options: Union[StorageOptions, None] = None
     on_bad_lines: Union[
         Literal["error", "warn", "skip"], Callable[[list[str]], Union[list[str], None]]
-    ] = ...
-    delim_whitespace: bool = ...
-    low_memory: bool = ...
-    memory_map: bool = ...
-    float_precision: Union[Literal["high", "legacy", "round_trip"], None] = ...
-    storage_options: Union[StorageOptions, None] = ...
+    ] = "error"
+    low_memory: bool = True
+    memory_map: bool = False
 
 
 def register() -> None:

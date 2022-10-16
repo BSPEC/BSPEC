@@ -1,7 +1,7 @@
 import sys
 import os.path
 from dataclasses import dataclass
-from typing import Sequence
+from typing import List
 
 from esper import Processor
 
@@ -26,9 +26,9 @@ else:
 requirements_path = os.path.join(BASE_DIR, "requirements/module_requirements.txt")
 requirements_dict = read_module_requirements(requirements_path)
 
-####################################
-#  Import Required System Modules: #
-####################################
+#######################################
+#  Import Required Processor Modules: #
+#######################################
 try:
     import pandas as pd  # noqa: E402
 except ImportError:
@@ -57,8 +57,7 @@ class PD_Read_CSV(Processor):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(kwargs)
-        self.components: Sequence = [
+        self.components: List = [
             RuntimeDebugPrint,
             Input_File_CSV,
             PD_DataFrames,
@@ -76,7 +75,7 @@ class PD_Read_CSV(Processor):
             pd_dataframes,
         ) in self.world.get_components(*self.components):
             input_file_csv_kwargs = vars(input_file_csv)
-            pd_dataframes.dataframe1 = pd.read_csv(input_file_csv_kwargs)
+            pd_dataframes.dataframe_1 = pd.read_csv(**input_file_csv_kwargs)
 
             if runtime_debug_print.runtime_debug_flag is True:
                 print()
@@ -85,9 +84,11 @@ class PD_Read_CSV(Processor):
                 print()
                 print("ent: ", ent)
                 print()
-                print("input_file_csv: ", input_file_csv)
+                print("input_file_csv: ")
+                print(input_file_csv)
                 print()
-                print("pd_dataframes: ", pd_dataframes)
+                print("pd_dataframes:")
+                print(pd_dataframes)
                 if runtime_debug_print.pause_execution is True:
                     print()
                     input("Enter to continue execution:")

@@ -18,6 +18,7 @@ The BSPEC will follow semantic versioning for its releases, with a `{MAJOR}.{MIN
   * [Python](#python)
   * [Dependencies](#dependencies)
 * [Quickstart](#quickstart)
+* [Changes to Repo](#changes-to-repo)
 
 ## Requirements
 ### Python
@@ -121,5 +122,11 @@ New Version: 1.2.4b0
 
 bumpver test '1.2.4b0' 'MAJOR.MINOR.PATCH[PYTAGNUM]' --tag-num
 New Version: 1.2.4b1
+```
+
+To do this on a commit version, remove `test`, the number e.g. `'1.2.3'` and the structure format `'MAJOR.MINOR.PATCH[PYTAGNUM]'` resulting in:
+```shell
+bumpver --patch
+
 ```
 
