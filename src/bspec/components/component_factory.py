@@ -40,7 +40,7 @@ def create(arguments: Dict[str, Any]) -> component:
     and use all other 'objects' as key-value properties to init the component class.
 
     Args:
-        arguments (Dict[str, Any]): _description_
+        arguments (Dict[str, Any]): any arguments for the component
 
     Raises:
         ValueError: missing component name in `component_creation_funcs`
