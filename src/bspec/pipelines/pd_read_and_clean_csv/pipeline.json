@@ -1,0 +1,30 @@
+{
+    "processor_plugins": [
+        "processors.pd_read_csv.processor"
+    ],
+    "world": {
+        "world_name": "pd_read_and_clean_csv",
+        "processors": [
+            {
+                "processor_name": "pd_read_csv",
+                "priority": 10
+            }
+        ],
+        "entities": [
+            {
+                "id": "read_and_clean_csv",
+                "components": [
+                    {
+                        "component_name": "runtime_debug_print"
+                    },
+                    {
+                        "component_name": "pd_dataframes"
+                    },
+                    {
+                        "component_name": "input_file_csv"
+                    }
+                ]
+            }
+        ]
+    }
+}

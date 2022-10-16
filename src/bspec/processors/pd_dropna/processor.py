@@ -10,7 +10,7 @@ from common_core.read_module_requirements import read_module_requirements
 from common_core.dynamic_module_install import dynamic_module_install
 
 from components.runtime_debug_print.runtime_debug_print import RuntimeDebugPrint
-from components.pd_input_file_csv.pd_input_file_csv import PD_Input_File_CSV
+from components.pd_input_dropna.pd_input_dropna import PD_Input_DropNA
 from components.pd_dataframe.pd_dataframes import PD_DataFrames
 
 ###########################################################################
@@ -42,7 +42,7 @@ except ImportError:
 
 
 @dataclass
-class PD_Read_CSV(Processor):
+class PD_DropNA(Processor):
     """Read a CSV using Pandas `read_csv`
 
     Args:
@@ -53,14 +53,13 @@ class PD_Read_CSV(Processor):
             will use to function. This includes generic entity settings
             or persist data. Components include:
                 * RuntimeDebugPrint
-                * PD_Input_File_CSV
                 * PD_DataFrames
     """
 
     def __init__(self, **kwargs):
         self.components: List = [
             RuntimeDebugPrint,
-            PD_Input_File_CSV,
+            PD_Input_DropNA,
             PD_DataFrames,
         ]
 
@@ -72,21 +71,30 @@ class PD_Read_CSV(Processor):
         """
         for ent, (
             runtime_debug_print,
-            pd_input_file_csv,
+            pd_input_dropna,
             pd_dataframes,
         ) in self.world.get_components(*self.components):
-            pd_input_file_csv_kwargs = vars(pd_input_file_csv)
-            pd_dataframes.dataframe_1 = pd.read_csv(**pd_input_file_csv_kwargs)
+            pd_input_dropna_kwargs = vars(pd_input_dropna)
+            pd_dataframes.dataframe_2 = pd_dataframes.dataframe_1.copy()
+            print()
+            print("pd_dataframes.dataframe_2")
+            print(pd_dataframes.dataframe_2.shape)
+            print()
+            pd_dataframes.dataframe_2 = pd_dataframes.dataframe_2.dropna()
+            print()
+            print("pd_dataframes.dataframe_2")
+            print(pd_dataframes.dataframe_2.shape)
+            print()
 
             if runtime_debug_print.runtime_debug_flag is True:
                 print()
-                print("PD_Read_CSV")
+                print("PD_DropNA")
                 print("============")
                 print()
                 print("ent: ", ent)
                 print()
-                print("pd_input_file_csv:")
-                print(pd_input_file_csv)
+                print("pd_input_dropna:")
+                print(pd_input_dropna)
                 print()
                 print("pd_dataframes:")
                 print(pd_dataframes)
@@ -96,5 +104,5 @@ class PD_Read_CSV(Processor):
 
 
 def register() -> None:
-    """use `processor_factory` to register the `PD_Read_CSV` component as 'pd_read_csv'"""
-    processor_factory.register("pd_read_csv", PD_Read_CSV)
+    """use `processor_factory` to register the `PD_DropNA` component as 'pd_dropna'"""
+    processor_factory.register("pd_dropna", PD_DropNA)

@@ -10,8 +10,6 @@ from components import component_factory
 from common_core.read_module_requirements import read_module_requirements
 from common_core.dynamic_module_install import dynamic_module_install
 
-PandasDataFrame = TypeVar("pandas.core.frame.DataFrame")
-
 ###########################################################################
 #  Load System Modules module_requirements.txt to support dynamic import: #
 ###########################################################################
@@ -33,6 +31,9 @@ try:
 except ImportError:
     module_name = "pandas"
     dynamic_module_install(module_name, requirements_dict)
+    import pandas as pd  # noqa: E402
+
+PandasDataFrame = TypeVar("pandas.core.frame.DataFrame")
 
 #########################################
 #  Define some PD_DataFrames Component: #

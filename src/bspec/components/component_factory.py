@@ -50,7 +50,7 @@ def create(arguments: Dict[str, Any]) -> component:
     """
     args_copy = arguments.copy()
     name = args_copy.pop("component_name")
-    args_copy = args_copy["component_properties"]
+    args_copy = args_copy.get("component_properties", {})
 
     try:
         creator_func = component_creation_funcs[name]

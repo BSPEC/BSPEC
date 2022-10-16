@@ -42,15 +42,16 @@ try:
 except ImportError:
     module_name = "pandas"
     dynamic_module_install(module_name, requirements_dict)
+    import pandas as pd  # noqa: E402
 
 
 from pandas._typing import (
     CompressionOptions,
     DtypeArg,
     StorageOptions,
-)
-from pandas.core.indexes.base import Index
-from pandas.core.series import Series
+)  # noqa: E402
+from pandas.core.indexes.base import Index  # noqa: E402
+from pandas.core.series import Series  # noqa: E402
 
 
 PandasDataFrame = TypeVar("pandas.core.frame.DataFrame")
@@ -63,7 +64,7 @@ PandasDataFrame = TypeVar("pandas.core.frame.DataFrame")
     reason="This allows for generic input parameters for CSV files to be imported using Pandas",
 )
 @component
-class Input_File_CSV:
+class PD_Input_File_CSV:
     """This allows for generic input parameters for CSV files to be imported using Pandas
 
     Params:
@@ -332,7 +333,7 @@ class Input_File_CSV:
 
     filepath_or_buffer: Union[str, os.PathLike[str]]
     delimiter: Union[str, None] = None
-    header: Union[int, Sequence[int], Literal["infer"], None] = None
+    header: Union[int, Sequence[int], Literal["infer"], None] = "infer"
     names: Union[list[str], None] = None
     index_col: Union[int, str, Sequence[Union[str, int]], Literal[False], None] = None
     usecols: Union[
@@ -370,7 +371,7 @@ class Input_File_CSV:
     date_parser: Callable = None
     dayfirst: bool = False
     cache_dates: bool = True
-    iterator: Literal[True] = True
+    iterator: Literal[True] = False
     chunksize: Union[int, None] = None
     compression: CompressionOptions = None
     thousands: Union[str, None] = None
@@ -394,5 +395,5 @@ class Input_File_CSV:
 
 
 def register() -> None:
-    """use `component_factory` to register the `Input_File_CSV` component as 'input_file_csv'"""
-    component_factory.register("input_file_csv", Input_File_CSV)
+    """use `component_factory` to register the `PD_Input_File_CSV` component as 'pd_input_file_csv'"""
+    component_factory.register("pd_input_file_csv", PD_Input_File_CSV)
