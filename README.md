@@ -126,7 +126,7 @@ New Version: 1.2.4b1
 
 To do this on a commit version, remove `test`, the number e.g. `'1.2.3'` and the structure format `'MAJOR.MINOR.PATCH[PYTAGNUM]'` resulting in:
 ```shell
-bumpver --patch
+bumpver update --patch
 
 ```
 
