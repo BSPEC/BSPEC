@@ -21,7 +21,7 @@ classifiers = [
 ]
 keywords = ["ECS", "Plugin", "Dynamic", "Dynamic"]
 dependencies = [
-    "esper >= 2.1",
+    "esper >= 2.3",
 ]
 
 [project.optional-dependencies]
