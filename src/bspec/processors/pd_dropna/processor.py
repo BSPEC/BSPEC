@@ -76,15 +76,9 @@ class PD_DropNA(Processor):
         ) in self.world.get_components(*self.components):
             pd_input_dropna_kwargs = vars(pd_input_dropna)
             pd_dataframes.dataframe_2 = pd_dataframes.dataframe_1.copy()
-            print()
-            print("pd_dataframes.dataframe_2")
-            print(pd_dataframes.dataframe_2.shape)
-            print()
-            pd_dataframes.dataframe_2 = pd_dataframes.dataframe_2.dropna()
-            print()
-            print("pd_dataframes.dataframe_2")
-            print(pd_dataframes.dataframe_2.shape)
-            print()
+            pd_dataframes.dataframe_2 = pd_dataframes.dataframe_2.dropna(
+                pd_input_dropna_kwargs
+            )
 
             if runtime_debug_print.runtime_debug_flag is True:
                 print()
