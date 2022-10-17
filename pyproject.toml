@@ -35,6 +35,12 @@ dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "build", "twine"]
 [project.scripts]
 bspec = "bspec.__main__:main"
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.bumpver]
 current_version = "0.1.7"
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
