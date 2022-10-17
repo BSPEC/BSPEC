@@ -1,7 +1,7 @@
 {
     "processor_plugins": [
-        "processors.pd_read_csv.processor",
-        "processors.pd_dropna.processor"
+        "bspec.processors.pd_read_csv.processor",
+        "bspec.processors.pd_dropna.processor"
     ],
     "starting_world": "read_and_clean_csv",
     "pipelines": [

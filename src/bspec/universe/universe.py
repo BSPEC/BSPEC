@@ -3,9 +3,9 @@ from typing import Callable, Dict, Union, Set
 
 from esper import World
 
-from plugin_core import loader as plugins_loader
-from processors import processor_factory
-from components import component_factory
+from bspec.plugin_core import loader as plugins_loader
+from bspec.processors import processor_factory
+from bspec.components import component_factory
 
 
 print("Python Version: ", platform.python_version())

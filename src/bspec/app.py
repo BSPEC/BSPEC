@@ -1,6 +1,6 @@
 import json
 
-from universe.universe import universe
+from bspec.universe.universe import universe
 
 if __name__ == "__main__":
     print()

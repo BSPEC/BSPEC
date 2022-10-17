@@ -5,13 +5,13 @@ from typing import List
 
 from esper import Processor
 
-from processors import processor_factory
-from common_core.read_module_requirements import read_module_requirements
-from common_core.dynamic_module_install import dynamic_module_install
+from bspec.processors import processor_factory
+from bspec.common_core.read_module_requirements import read_module_requirements
+from bspec.common_core.dynamic_module_install import dynamic_module_install
 
-from components.runtime_debug_print.runtime_debug_print import RuntimeDebugPrint
-from components.pd_input_file_csv.pd_input_file_csv import PD_Input_File_CSV
-from components.pd_dataframe.pd_dataframes import PD_DataFrames
+from bspec.components.runtime_debug_print.runtime_debug_print import RuntimeDebugPrint
+from bspec.components.pd_input_file_csv.pd_input_file_csv import PD_Input_File_CSV
+from bspec.components.pd_dataframe.pd_dataframes import PD_DataFrames
 
 ###########################################################################
 #  Load System Modules module_requirements.txt to support dynamic import: #

@@ -10,9 +10,9 @@ from typing import (
 
 from deprecated.sphinx import versionadded
 
-from components import component_factory
-from common_core.read_module_requirements import read_module_requirements
-from common_core.dynamic_module_install import dynamic_module_install
+from bspec.components import component_factory
+from bspec.common_core.read_module_requirements import read_module_requirements
+from bspec.common_core.dynamic_module_install import dynamic_module_install
 
 ###########################################################################
 #  Load System Modules module_requirements.txt to support dynamic import: #

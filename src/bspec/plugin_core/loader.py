@@ -2,7 +2,7 @@
 import importlib
 from typing import List
 
-from plugin_core.plugin_module_interface import ModuleInterface
+from bspec.plugin_core.plugin_module_interface import ModuleInterface
 
 
 def import_module(module_name: str) -> ModuleInterface:

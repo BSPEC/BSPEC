@@ -2,7 +2,7 @@ from dataclasses import dataclass as component
 
 from deprecated.sphinx import versionadded
 
-from components import component_factory
+from bspec.components import component_factory
 
 ###########################
 # Define Debug Component: #
