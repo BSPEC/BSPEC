@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "BSPEC"
-version = "0.1.9"
+version = "0.1.10"
 authors = [
   { name="Ryan Julyan", email="ryan@julyan.biz" },
 ]
@@ -45,7 +45,7 @@ where = ["src"]
 "*" = ["*.txt", "*.rst", "*.csv", "*.json"]
 
 [tool.bumpver]
-current_version = "0.1.9"
+current_version = "0.1.10"
 version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit_message  = "Bump version {old_version} -> {new_version}"
 commit          = true
