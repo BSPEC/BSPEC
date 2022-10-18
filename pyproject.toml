@@ -42,7 +42,7 @@ include-package-data = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-"*" = ["*.txt", "*.rst", "*.csv"]
+"*" = ["*.txt", "*.rst", "*.csv", "*.json"]
 
 [tool.bumpver]
 current_version = "0.1.9"
