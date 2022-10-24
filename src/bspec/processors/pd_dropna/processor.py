@@ -53,6 +53,7 @@ class PD_DropNA(Processor):
             will use to function. This includes generic entity settings
             or persist data. Components include:
                 * RuntimeDebugPrint
+                * PD_Input_DropNA
                 * PD_DataFrames
     """
 

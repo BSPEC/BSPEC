@@ -4,9 +4,9 @@ from deprecated.sphinx import versionadded
 
 from bspec.components import component_factory
 
-###########################
-# Define Debug Component: #
-###########################
+#######################################
+# Define RuntimeDebugPrint Component: #
+#######################################
 @versionadded(
     version="0.1.2",
     reason="This allows multiple entities to use debug flags to automate debugging from config",
