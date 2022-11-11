@@ -1,5 +1,5 @@
 import platform
-from typing import Callable, Dict, Union, Set
+from typing import Callable, Dict, List, Union, Set
 
 from esper import World
 
@@ -34,14 +34,39 @@ def universe(data: Dict[str, Union[str, list, int, float, dict]], timed: bool = 
     # Set the starting world
     starting_world = data["starting_world"]
 
+    processor_plugins: Set = set(data["processor_plugins"])
+
+    # load pipelines:
+    pipelines: Dict = data.get("pipelines", {})
+    for pipeline in pipelines:
+        # Load Pipeline Module
+        pipline_module = plugins_loader.import_module(pipeline["pipeline"])
+        # Update Global plugins to import later
+        processor_plugins.update(pipline_module.pipeline["processor_plugins"])
+        # Get world details from pipeline
+        world = pipline_module.pipeline["world"]
+        # Override Pipeline Entities details from parent config
+        world_entities: List = []
+        for entity in world["entities"]:
+            pipeline_entity = next(
+                (item for item in pipeline["entities"] if item["id"] == entity["id"]),
+                {},
+            )
+            pipeline_entity = {**entity, **pipeline_entity}
+            world_entities.append(pipeline_entity)
+        world["entities"] = world_entities
+
+        # TODO: Add world to galexy (Consider override of existing worlds with the same name!)
+
     # load the processor plugins
     # currently using plugin_core loader which may need to change in the future
-    plugins_loader.load_plugins(data["processor_plugins"])
+    print("Register processor_plugins:")
+    print(processor_plugins)
+    plugins_loader.load_plugins(processor_plugins)
 
     entities: Dict = {}
     processors: Dict[str, Dict[str, Union[Callable, int]]] = {}
     components: Set[str] = set()
-
     for world in data["galaxy"]:
         # Create a World instance to hold Entities, Components and Processors:
         # Named instance will allow us to quickly and easily reference for traversal from other worlds
