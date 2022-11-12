@@ -2,10 +2,11 @@
     "processor_plugins": [
         "bspec.processors.pd_read_csv.processor"
     ],
-    "starting_world": "read_and_clean_csv",
+    "starting_world": "read_example_stores",
     "pipelines": [
         {
             "pipeline": "bspec.pipelines.pd_read_and_clean_csv.pipeline",
+            "world_name": "read_example_stores",
             "entities": [
                 {
                     "id": "read_and_clean_csv",

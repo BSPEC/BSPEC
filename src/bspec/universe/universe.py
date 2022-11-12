@@ -18,17 +18,25 @@ galaxy: Dict[str, World] = {}
 ############################################################
 # Instantiate everything, and create your main logic loop: #
 ############################################################
-def universe(data: Dict[str, Union[str, list, int, float, dict]], timed: bool = False):
+def universe(
+    data: Dict[str, Union[str, list, int, float, dict]],
+    exception_at_duplicate_world_names: bool = True,
+    timed: bool = False,
+):
     """The main `universe` function that will load the plugins, register worlds to the
     galaxy and processing the starting world.
 
     Args:
         data (Dict[str, Union[str, list, int, float, dict]]): Config data dictionary
 
+        exception_at_duplicate_world_names (bool): this is used to raise an exception if
+                                                more than 1 world has the same name, to
+                                                prevent unexpected application behavior
+
         timed (bool): using the package `esper` how will World be registered?
                      it will replace `_process` with `_timed_process` allowing you to benchmark
                      the runtime and understand how long each `Processor` will take to run the
-                     `process` function, which is saved to the property `process_times`!
+                     `process` function, which is saved to the property `process_times`
     """
 
     # Set the starting world
@@ -36,15 +44,20 @@ def universe(data: Dict[str, Union[str, list, int, float, dict]], timed: bool = 
 
     processor_plugins: Set = set(data["processor_plugins"])
 
-    # load pipelines:
+    galaxy_config = data["galaxy"]
+
+    # Load pipelines:
     pipelines: Dict = data.get("pipelines", {})
     for pipeline in pipelines:
         # Load Pipeline Module
         pipline_module = plugins_loader.import_module(pipeline["pipeline"])
+
         # Update Global plugins to import later
         processor_plugins.update(pipline_module.pipeline["processor_plugins"])
+
         # Get world details from pipeline
         world = pipline_module.pipeline["world"]
+
         # Override Pipeline Entities details from parent config
         world_entities: List = []
         for entity in world["entities"]:
@@ -56,7 +69,10 @@ def universe(data: Dict[str, Union[str, list, int, float, dict]], timed: bool = 
             world_entities.append(pipeline_entity)
         world["entities"] = world_entities
 
-        # TODO: Add world to galexy (Consider override of existing worlds with the same name!)
+        # Override world name of pipeline with config world_name or default to pipeline name
+        world["world_name"] = pipeline.get("world_name", world["world_name"])
+
+        galaxy_config.append(world)
 
     # load the processor plugins
     # currently using plugin_core loader which may need to change in the future
@@ -64,14 +80,42 @@ def universe(data: Dict[str, Union[str, list, int, float, dict]], timed: bool = 
     print(processor_plugins)
     plugins_loader.load_plugins(processor_plugins)
 
+    # Highlight Duplicate World Names
+    unique_world_names: List[str] = []
+
+    # set up ECS requirements for global registration
     entities: Dict = {}
     processors: Dict[str, Dict[str, Union[Callable, int]]] = {}
     components: Set[str] = set()
-    for world in data["galaxy"]:
+
+    for world in galaxy_config:
         # Create a World instance to hold Entities, Components and Processors:
         # Named instance will allow us to quickly and easily reference for traversal from other worlds
         #   by using "world_name"
-        world_name = world["world_name"]
+        world_name: str = world["world_name"]
+
+        # Highlight duplicate world_names
+        if world_name not in unique_world_names:
+            unique_world_names.append(world_name)
+        else:
+            warning_msg: str = f"""You have a duplicate `world_name`: {world_name}
+                You may get unexpected results with duplicated world names as the `world_name` is used
+                to look up and process a world within in a `galaxy` with:
+                e.g.
+                    galaxy[world_name].process()
+                
+                Therefore a duplicate `world_name` may not run the expected code/ config
+
+                If you are using pipelines, consider adding a more specific `world_name` to override the
+                default pipeline `world_name` as other pipelines may use the same underlying pipeline
+                and therefore have the same name.
+                """
+            print(warning_msg)
+
+            # Exception at duplicate world_names
+            if exception_at_duplicate_world_names:
+                raise Exception(warning_msg)
+
         galaxy[world_name] = World(timed=timed)
 
         # create the processors
