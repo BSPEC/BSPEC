@@ -6,6 +6,7 @@ from esper import World
 from bspec.plugin_core import loader as plugins_loader
 from bspec.processors import processor_factory
 from bspec.components import component_factory
+from bspec.pipelines.recursive_pipeline_read import recursive_pipeline_read
 
 
 print("Python Version: ", platform.python_version())
@@ -42,37 +43,19 @@ def universe(
     # Set the starting world
     starting_world = data["starting_world"]
 
-    processor_plugins: Set = set(data["processor_plugins"])
+    processor_plugins: Set[str] = set(data["processor_plugins"])
 
-    galaxy_config = data["galaxy"]
+    galaxy_config: List = data["galaxy"]
 
     # Load pipelines:
-    pipelines: Dict = data.get("pipelines", {})
-    for pipeline in pipelines:
-        # Load Pipeline Module
-        pipline_module = plugins_loader.import_module(pipeline["pipeline"])
 
-        # Update Global plugins to import later
-        processor_plugins.update(pipline_module.pipeline["processor_plugins"])
-
-        # Get world details from pipeline
-        world = pipline_module.pipeline["world"]
-
-        # Override Pipeline Entities details from parent config
-        world_entities: List = []
-        for entity in world["entities"]:
-            pipeline_entity = next(
-                (item for item in pipeline["entities"] if item["id"] == entity["id"]),
-                {},
-            )
-            pipeline_entity = {**entity, **pipeline_entity}
-            world_entities.append(pipeline_entity)
-        world["entities"] = world_entities
-
-        # Override world name of pipeline with config world_name or default to pipeline name
-        world["world_name"] = pipeline.get("world_name", world["world_name"])
-
-        galaxy_config.append(world)
+    returned_val = recursive_pipeline_read(
+        data=data,
+        processor_plugins=processor_plugins,
+        galaxy_config=galaxy_config,
+    )
+    processor_plugins.update(returned_val["processor_plugins"])
+    galaxy_config = returned_val["galaxy_config"]
 
     # load the processor plugins
     # currently using plugin_core loader which may need to change in the future
@@ -99,17 +82,17 @@ def universe(
             unique_world_names.append(world_name)
         else:
             warning_msg: str = f"""You have a duplicate `world_name`: {world_name}
-                You may get unexpected results with duplicated world names as the `world_name` is used
-                to look up and process a world within in a `galaxy` with:
-                e.g.
-                    galaxy[world_name].process()
-                
-                Therefore a duplicate `world_name` may not run the expected code/ config
+            You may get unexpected results with duplicated world names as the `world_name` is used
+            to look up and process a world within in a `galaxy` with:
+            e.g.
+            galaxy[world_name].process()
 
-                If you are using pipelines, consider adding a more specific `world_name` to override the
-                default pipeline `world_name` as other pipelines may use the same underlying pipeline
-                and therefore have the same name.
-                """
+            Therefore a duplicate `world_name` may not run the expected code/ config
+
+            If you are using pipelines, consider adding a more specific `world_name` to override the
+            default pipeline `world_name` as other pipelines may use the same underlying pipeline
+            and therefore have the same name.
+            """
             print(warning_msg)
 
             # Exception at duplicate world_names
