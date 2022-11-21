@@ -10,8 +10,7 @@ from bspec.common_core.read_module_requirements import read_module_requirements
 from bspec.common_core.dynamic_module_install import dynamic_module_install
 
 from bspec.components.runtime_debug_print.runtime_debug_print import RuntimeDebugPrint
-from bspec.components.pd_input_file_csv.pd_input_file_csv import PD_Input_File_CSV
-from bspec.components.pd_dataframe.pd_dataframes import PD_DataFrames
+from bspec.components.dash_ui.dash_ui import Dash_Ui
 
 ###########################################################################
 #  Load System Modules module_requirements.txt to support dynamic import: #
@@ -30,11 +29,11 @@ requirements_dict = read_module_requirements(requirements_path)
 #  Import Required Processor Modules: #
 #######################################
 try:
-    import pandas as pd  # noqa: E402
+    from dash import Dash  # noqa: E402
 except ImportError:
-    module_name = "pandas"
+    module_name = "dash"
     dynamic_module_install(module_name, requirements_dict)
-    import pandas as pd  # noqa: E402
+    from dash import Dash  # noqa: E402
 
 ################################
 #  Define some Systems:
@@ -42,7 +41,7 @@ except ImportError:
 
 
 @dataclass
-class PD_Read_CSV(Processor):
+class Dash_App(Processor):
     """Read a CSV using Pandas `read_csv`
 
     Args:
@@ -53,15 +52,14 @@ class PD_Read_CSV(Processor):
             will use to function. This includes generic entity settings
             or persist data. Components include:
                 * RuntimeDebugPrint
-                * PD_Input_File_CSV
-                * PD_DataFrames
+                * Dash_Ui
     """
 
     def __init__(self, **kwargs):
+        super().__init__(kwargs)
         self.components: Sequence = [
             RuntimeDebugPrint,
-            PD_Input_File_CSV,
-            PD_DataFrames,
+            Dash_Ui,
         ]
 
     def process(self):
@@ -72,29 +70,31 @@ class PD_Read_CSV(Processor):
         """
         for ent, (
             runtime_debug_print,
-            pd_input_file_csv,
-            pd_dataframes,
+            dash_ui,
         ) in self.world.get_components(*self.components):
-            pd_input_file_csv_kwargs = vars(pd_input_file_csv)
-            pd_dataframes.dataframe_1 = pd.read_csv(**pd_input_file_csv_kwargs)
+            external_stylesheets = dash_ui.get("external_stylesheets", [])
+            app = Dash(__name__, external_stylesheets=external_stylesheets)
+
+            app.run_server(debug=runtime_debug_print.runtime_debug_flag)
 
             if runtime_debug_print.runtime_debug_flag is True:
                 print()
-                print("PD_Read_CSV")
+                print("Dash_App")
                 print("============")
                 print()
                 print("ent: ", ent)
                 print()
-                print("pd_input_file_csv:")
-                print(pd_input_file_csv)
+                print("dash_ui:")
+                print(dash_ui)
                 print()
-                print("pd_dataframes:")
-                print(pd_dataframes)
+                print("app:")
+                print(app)
+                print()
                 if runtime_debug_print.pause_execution is True:
                     print()
                     input("Enter to continue execution:")
 
 
 def register() -> None:
-    """use `processor_factory` to register the `PD_Read_CSV` component as 'pd_read_csv'"""
-    processor_factory.register("pd_read_csv", PD_Read_CSV)
+    """use `processor_factory` to register the `Dash_App` component as 'dash_app'"""
+    processor_factory.register("dash_app", Dash_App)

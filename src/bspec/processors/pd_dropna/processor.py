@@ -1,7 +1,7 @@
 import sys
 import os.path
 from dataclasses import dataclass
-from typing import List
+from typing import Sequence
 
 from esper import Processor
 
@@ -58,7 +58,7 @@ class PD_DropNA(Processor):
     """
 
     def __init__(self, **kwargs):
-        self.components: List = [
+        self.components: Sequence = [
             RuntimeDebugPrint,
             PD_Input_DropNA,
             PD_DataFrames,

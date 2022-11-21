@@ -39,19 +39,21 @@ except ImportError:
 #########################################
 @versionadded(
     version="0.1.11",
-    reason="This is the app instance of flask",
+    reason="This will allow for a dynamic **kwargs to be created to allow dynamic elements to\
+         be loaded and used with flask",
 )
 @component
-class Flask_App:
-    """This is the app instance of flask
+class Flask_UI:
+    """This is the dynamic elements of flask
 
     Params:
-        app (Flask): This is the app instance of flask
+        **kwargs: This is the dynamic **kwargs for dynamic elements of flask
     """
 
-    app: Flask = Flask(__name__, template_folder="templates")
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
 
 def register() -> None:
-    """use `component_factory` to register the `Flask_App` component as 'flask_app'"""
-    component_factory.register("flask_app", Flask_App)
+    """use `component_factory` to register the `Flask_UI` component as 'flask_ui'"""
+    component_factory.register("flask_ui", Flask_UI)
