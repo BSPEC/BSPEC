@@ -36,9 +36,9 @@ except ImportError:
     dynamic_module_install(module_name, requirements_dict)
     import pandas as pd  # noqa: E402
 
-################################
-#  Define some Systems:
-################################
+#########################
+#  Define some Systems: #
+#########################
 
 
 @dataclass

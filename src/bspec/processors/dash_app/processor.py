@@ -11,6 +11,7 @@ from bspec.common_core.dynamic_module_install import dynamic_module_install
 
 from bspec.components.runtime_debug_print.runtime_debug_print import RuntimeDebugPrint
 from bspec.components.dash_ui.dash_ui import Dash_Ui
+from bspec.processors.dash_app.dash_component_factory import DashComponentsFactory
 
 ###########################################################################
 #  Load System Modules module_requirements.txt to support dynamic import: #
@@ -35,9 +36,11 @@ except ImportError:
     dynamic_module_install(module_name, requirements_dict)
     from dash import Dash  # noqa: E402
 
-################################
-#  Define some Systems:
-################################
+from dash import html, dcc
+
+#########################
+#  Define some Systems: #
+#########################
 
 
 @dataclass
@@ -72,8 +75,10 @@ class Dash_App(Processor):
             runtime_debug_print,
             dash_ui,
         ) in self.world.get_components(*self.components):
-            external_stylesheets = dash_ui.get("external_stylesheets", [])
+            external_stylesheets = dash_ui.pop("external_stylesheets", [])
             app = Dash(__name__, external_stylesheets=external_stylesheets)
+
+            app.layout = html.Div(DashComponentsFactory(ui_config=dash_ui).layout)
 
             app.run_server(debug=runtime_debug_print.runtime_debug_flag)
 
