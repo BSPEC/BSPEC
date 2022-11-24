@@ -36,8 +36,6 @@ except ImportError:
     dynamic_module_install(module_name, requirements_dict)
     from dash import Dash  # noqa: E402
 
-from dash import html, dcc
-
 #########################
 #  Define some Systems: #
 #########################

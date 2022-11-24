@@ -38,13 +38,13 @@ T = TypeVar("T")
 @dataclass
 class DashComponentsFactory:
     ui_config: Dict
-    components: Dict[str, T] = field(default=dict)
-    _layout: Sequence[T] = field(default=list)
+    components: Dict[str, T] = field(default_factory=dict)
+    _layout: Sequence[T] = field(default_factory=list)
 
     @property
     def layout(self):
         self._layout = self.register_layout(
-            self, ui_config=self.ui_config, layout=self.layout
+            ui_config=self.ui_config, layout=self._layout
         )
         return self._layout
 
@@ -53,12 +53,12 @@ class DashComponentsFactory:
             component = self.components.get(class_name)
             if component is None:
                 component = self.load_component(class_name)
-            children_ui_config = ui_config[class_name].pop("children_config")
+            children_ui_config = ui_config[class_name].pop("children_config", None)
             if children_ui_config is not None:
                 layout.extend(
                     self.register_layout(ui_config=children_ui_config, layout=layout)
                 )
-            layout.append(component(ui_config[class_name]))
+            layout.append(component(**ui_config[class_name]))
         return layout
 
     def load_component(self, class_name: str):
