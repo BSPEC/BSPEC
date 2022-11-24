@@ -30,11 +30,11 @@ requirements_dict = read_module_requirements(requirements_path)
 #  Import Required Processor Modules: #
 #######################################
 try:
-    from dash import Dash  # noqa: E402
+    from dash import Dash, html  # noqa: E402
 except ImportError:
     module_name = "dash"
     dynamic_module_install(module_name, requirements_dict)
-    from dash import Dash  # noqa: E402
+    from dash import Dash, html  # noqa: E402
 
 #########################
 #  Define some Systems: #

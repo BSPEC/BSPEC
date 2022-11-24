@@ -50,15 +50,24 @@ class DashComponentsFactory:
 
     def register_layout(self, ui_config: Dict, layout: Sequence[T]):
         for class_name in ui_config:
+            print()
+            print(self.components)
+            print()
             component = self.components.get(class_name)
             if component is None:
                 component = self.load_component(class_name)
+            print()
+            print(self.components)
+            print()
             children_ui_config = ui_config[class_name].pop("children_config", None)
+            children = {}
             if children_ui_config is not None:
-                layout.extend(
-                    self.register_layout(ui_config=children_ui_config, layout=layout)
-                )
-            layout.append(component(**ui_config[class_name]))
+                children = {
+                    "children": self.register_layout(
+                        ui_config=children_ui_config, layout=[]
+                    )
+                }
+            layout.append(component(**{**ui_config[class_name], **children}))
         return layout
 
     def load_component(self, class_name: str):
