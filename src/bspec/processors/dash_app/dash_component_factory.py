@@ -25,12 +25,12 @@ requirements_dict = read_module_requirements(requirements_path)
 #######################################
 try:
     from dash import dcc, html  # noqa: E402
-    import plotly.express as px
+    import plotly.express as px  # noqa: E402
 except ImportError:
     module_name = "dash"
     dynamic_module_install(module_name, requirements_dict)
     from dash import dcc, html  # noqa: E402
-    import plotly.express as px
+    import plotly.express as px  # noqa: E402
 
 T = TypeVar("T")
 
@@ -50,16 +50,12 @@ class DashComponentsFactory:
 
     def register_layout(self, ui_config: Dict, layout: Sequence[T]):
         for class_name in ui_config:
-            print()
-            print(self.components)
-            print()
             component = self.components.get(class_name)
+            children_ui_config: Dict = None
             if component is None:
                 component = self.load_component(class_name)
-            print()
-            print(self.components)
-            print()
-            children_ui_config = ui_config[class_name].pop("children_config", None)
+            if isinstance(ui_config[class_name], dict):
+                children_ui_config = ui_config[class_name].pop("children_config", None)
             children = {}
             if children_ui_config is not None:
                 children = {
@@ -67,7 +63,12 @@ class DashComponentsFactory:
                         ui_config=children_ui_config, layout=[]
                     )
                 }
-            layout.append(component(**{**ui_config[class_name], **children}))
+            ui_config_details = ui_config[class_name]
+            if isinstance(ui_config_details, dict):
+                ui_config_details = {**ui_config_details, **children}
+                layout.append(component(**ui_config_details))
+            else:
+                layout.append(component(ui_config_details))
         return layout
 
     def load_component(self, class_name: str):

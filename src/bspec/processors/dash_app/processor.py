@@ -30,11 +30,13 @@ requirements_dict = read_module_requirements(requirements_path)
 #  Import Required Processor Modules: #
 #######################################
 try:
-    from dash import Dash, html  # noqa: E402
+    from dash import Dash, html, dcc  # noqa: E402
+    import plotly.express as px  # noqa: E402
 except ImportError:
     module_name = "dash"
     dynamic_module_install(module_name, requirements_dict)
-    from dash import Dash, html  # noqa: E402
+    from dash import Dash, html, dcc  # noqa: E402
+    import plotly.express as px  # noqa: E402
 
 #########################
 #  Define some Systems: #
@@ -57,7 +59,7 @@ class Dash_App(Processor):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(kwargs)
+        # super().__init__(kwargs)
         self.components: Sequence = [
             RuntimeDebugPrint,
             Dash_Ui,
@@ -73,12 +75,19 @@ class Dash_App(Processor):
             runtime_debug_print,
             dash_ui,
         ) in self.world.get_components(*self.components):
+            dash_ui = dash_ui.__dict__
+
             external_stylesheets = dash_ui.pop("external_stylesheets", [])
             app = Dash(__name__, external_stylesheets=external_stylesheets)
 
-            app.layout = html.Div(DashComponentsFactory(ui_config=dash_ui).layout)
+            layout = DashComponentsFactory(ui_config=dash_ui).layout
 
-            app.run_server(debug=runtime_debug_print.runtime_debug_flag)
+            print(layout)
+
+            app.layout = html.Div(layout)
+
+            # app.run_server(debug=runtime_debug_print.runtime_debug_flag)
+            app.run_server()
 
             if runtime_debug_print.runtime_debug_flag is True:
                 print()
