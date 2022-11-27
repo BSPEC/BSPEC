@@ -3,14 +3,39 @@
         "bspec.processors.dash_app.processor"
     ],
     "starting_world": "dash_app",
-    "pipelines": [],
+    "pipelines": [
+        {
+            "pipeline": "bspec.pipelines.pd_read_and_clean_csv.pipeline",
+            "world_name": "read_example_stores",
+            "entities": [
+                {
+                    "id": "read_and_clean_csv",
+                    "components": [
+                        {
+                            "component_name": "runtime_debug_print",
+                            "component_properties": {
+                                "runtime_debug_flag": true,
+                                "pause_execution": false
+                            }
+                        },
+                        {
+                            "component_name": "pd_input_file_csv",
+                            "component_properties": {
+                                "filepath_or_buffer": "./demo_data/example_stores.csv"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
     "galaxy": [
         {
             "world_name": "dash_app",
             "processors": [
                 {
                     "processor_name": "dash_app",
-                    "priority": 10
+                    "priority": 2
                 }
             ],
             "entities": [

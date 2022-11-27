@@ -56,7 +56,6 @@ class Flask_App(Processor):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(kwargs)
         self.components: Sequence = [
             RuntimeDebugPrint,
             Flask_UI,

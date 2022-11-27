@@ -32,6 +32,14 @@ except ImportError:
     from dash import dcc, html  # noqa: E402
     import plotly.express as px  # noqa: E402
 
+try:
+    import dash_bootstrap_components as dbc  # noqa: E402
+except ImportError:
+    module_name = "dash-bootstrap-components"
+    dynamic_module_install(module_name, requirements_dict)
+    import dash_bootstrap_components as dbc  # noqa: E402
+
+
 T = TypeVar("T")
 
 
@@ -78,6 +86,8 @@ class DashComponentsFactory:
             self.components[class_name] = getattr(dcc, class_name)
         elif hasattr(px, class_name):
             self.components[class_name] = getattr(px, class_name)
+        elif hasattr(dbc, class_name):
+            self.components[class_name] = getattr(dbc, class_name)
         else:
             raise ImportError(
                 f"Cannot import `{class_name}` from `dash.html`, `dash.dcc` or `plotly.express`"
