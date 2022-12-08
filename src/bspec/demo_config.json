@@ -35,7 +35,7 @@
             "processors": [
                 {
                     "processor_name": "dash_app",
-                    "priority": 2
+                    "priority": 1
                 }
             ],
             "entities": [

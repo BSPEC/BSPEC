@@ -8,14 +8,17 @@ def recursive_pipeline_read(
     processor_plugins: Set[str],
     galaxy_config: List,
 ):
+    all_processor_plugins = processor_plugins
     pipelines: Dict = data.get("pipelines", {})
     for pipeline in pipelines:
+        processor_plugins: Set[str] = set([])
 
         # Load Pipeline Module
         pipline_module = plugins_loader.import_module(pipeline["pipeline"])
 
         # Update Global plugins to import later
         processor_plugins.update(pipline_module.pipeline["processor_plugins"])
+        all_processor_plugins.update(processor_plugins)
 
         # Recursive Pipeline check
         if pipline_module.pipeline.get("pipelines") is not None:
@@ -24,7 +27,7 @@ def recursive_pipeline_read(
                 processor_plugins=processor_plugins,
                 galaxy_config=galaxy_config,
             )
-            processor_plugins.update(returned_val["processor_plugins"])
+            all_processor_plugins.update(returned_val["all_processor_plugins"])
             galaxy_config = returned_val["galaxy_config"]
 
         # Get world details from pipeline
@@ -47,7 +50,7 @@ def recursive_pipeline_read(
         galaxy_config.append(world)
 
     return_var: Dict = {
-        "processor_plugins": processor_plugins,
+        "all_processor_plugins": all_processor_plugins,
         "galaxy_config": galaxy_config,
     }
 
