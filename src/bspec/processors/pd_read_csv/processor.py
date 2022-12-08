@@ -1,7 +1,7 @@
 import sys
 import os.path
 from dataclasses import dataclass
-from typing import List
+from typing import Sequence
 
 from esper import Processor
 
@@ -36,9 +36,9 @@ except ImportError:
     dynamic_module_install(module_name, requirements_dict)
     import pandas as pd  # noqa: E402
 
-################################
-#  Define some Systems:
-################################
+#########################
+#  Define some Systems: #
+#########################
 
 
 @dataclass
@@ -58,7 +58,7 @@ class PD_Read_CSV(Processor):
     """
 
     def __init__(self, **kwargs):
-        self.components: List = [
+        self.components: Sequence = [
             RuntimeDebugPrint,
             PD_Input_File_CSV,
             PD_DataFrames,

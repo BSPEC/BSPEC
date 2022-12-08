@@ -1,12 +1,12 @@
 {
     "processor_plugins": [
-        "bspec.processors.pd_read_csv.processor",
-        "bspec.processors.pd_dropna.processor"
+        "bspec.processors.dash_app.processor"
     ],
-    "starting_world": "read_and_clean_csv",
+    "starting_world": "dash_app",
     "pipelines": [
         {
-            "pipeline": "pipelines.pd_read_and_clean_csv.pipeline",
+            "pipeline": "bspec.pipelines.pd_read_and_clean_csv.pipeline",
+            "world_name": "read_example_stores",
             "entities": [
                 {
                     "id": "read_and_clean_csv",
@@ -31,20 +31,16 @@
     ],
     "galaxy": [
         {
-            "world_name": "read_and_clean_csv",
+            "world_name": "dash_app",
             "processors": [
                 {
-                    "processor_name": "pd_read_csv",
-                    "priority": 10
-                },
-                {
-                    "processor_name": "pd_dropna",
-                    "priority": 9
+                    "processor_name": "dash_app",
+                    "priority": 1
                 }
             ],
             "entities": [
                 {
-                    "id": "read_and_clean_csv",
+                    "id": "dash_ui",
                     "components": [
                         {
                             "component_name": "runtime_debug_print",
@@ -54,16 +50,31 @@
                             }
                         },
                         {
-                            "component_name": "pd_dataframes"
-                        },
-                        {
-                            "component_name": "pd_input_file_csv",
+                            "component_name": "dash_ui",
                             "component_properties": {
-                                "filepath_or_buffer": "./demo_data/example_stores.csv"
+                                "Div": {
+                                    "children_config": {
+                                        "H1": "Hello World",
+                                        "Checklist": [
+                                            "Test 1",
+                                            "Test 2"
+                                        ],
+                                        "Div": {
+                                            "children_config": {
+                                                "Dropdown": {
+                                                    "options": [
+                                                        1,
+                                                        2,
+                                                        3
+                                                    ],
+                                                    "value": 3,
+                                                    "multi": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        },
-                        {
-                            "component_name": "pd_input_dropna"
                         }
                     ]
                 }

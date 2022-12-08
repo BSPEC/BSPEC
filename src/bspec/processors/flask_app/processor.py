@@ -10,8 +10,7 @@ from bspec.common_core.read_module_requirements import read_module_requirements
 from bspec.common_core.dynamic_module_install import dynamic_module_install
 
 from bspec.components.runtime_debug_print.runtime_debug_print import RuntimeDebugPrint
-from bspec.components.pd_input_dropna.pd_input_dropna import PD_Input_DropNA
-from bspec.components.pd_dataframe.pd_dataframes import PD_DataFrames
+from bspec.components.flask_ui.flask_ui import Flask_UI
 
 ###########################################################################
 #  Load System Modules module_requirements.txt to support dynamic import: #
@@ -30,11 +29,11 @@ requirements_dict = read_module_requirements(requirements_path)
 #  Import Required Processor Modules: #
 #######################################
 try:
-    import pandas as pd  # noqa: E402
+    from flask import Flask  # noqa: E402
 except ImportError:
-    module_name = "pandas"
+    module_name = "flask"
     dynamic_module_install(module_name, requirements_dict)
-    import pandas as pd  # noqa: E402
+    from flask import Flask  # noqa: E402
 
 #########################
 #  Define some Systems: #
@@ -42,7 +41,7 @@ except ImportError:
 
 
 @dataclass
-class PD_DropNA(Processor):
+class Flask_App(Processor):
     """Read a CSV using Pandas `read_csv`
 
     Args:
@@ -53,15 +52,13 @@ class PD_DropNA(Processor):
             will use to function. This includes generic entity settings
             or persist data. Components include:
                 * RuntimeDebugPrint
-                * PD_Input_DropNA
-                * PD_DataFrames
+                * Flask_Ui
     """
 
     def __init__(self, **kwargs):
         self.components: Sequence = [
             RuntimeDebugPrint,
-            PD_Input_DropNA,
-            PD_DataFrames,
+            Flask_UI,
         ]
 
     def process(self):
@@ -72,32 +69,28 @@ class PD_DropNA(Processor):
         """
         for ent, (
             runtime_debug_print,
-            pd_input_dropna,
-            pd_dataframes,
+            flask_ui,
         ) in self.world.get_components(*self.components):
-            pd_input_dropna_kwargs = vars(pd_input_dropna)
-            pd_dataframes.dataframe_2 = pd_dataframes.dataframe_1.copy()
-            pd_dataframes.dataframe_2 = pd_dataframes.dataframe_2.dropna(
-                pd_input_dropna_kwargs
-            )
+            app: Flask = Flask(__name__, template_folder="templates")
 
             if runtime_debug_print.runtime_debug_flag is True:
                 print()
-                print("PD_DropNA")
+                print("Flask_App")
                 print("============")
                 print()
                 print("ent: ", ent)
                 print()
-                print("pd_input_dropna:")
-                print(pd_input_dropna)
+                print("flask_ui:")
+                print(flask_ui)
                 print()
-                print("pd_dataframes:")
-                print(pd_dataframes)
+                print("app:")
+                print(app)
+                print()
                 if runtime_debug_print.pause_execution is True:
                     print()
                     input("Enter to continue execution:")
 
 
 def register() -> None:
-    """use `processor_factory` to register the `PD_DropNA` component as 'pd_dropna'"""
-    processor_factory.register("pd_dropna", PD_DropNA)
+    """use `processor_factory` to register the `Flask_App` component as 'flask_app'"""
+    processor_factory.register("flask_app", Flask_App)
