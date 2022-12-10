@@ -39,6 +39,13 @@ except ImportError:
     dynamic_module_install(module_name, requirements_dict)
     import dash_bootstrap_components as dbc  # noqa: E402
 
+try:
+    import dash_pivottable as dp  # noqa: E402
+except ImportError:
+    module_name = "dash-pivottable"
+    dynamic_module_install(module_name, requirements_dict)
+    import dash_pivottable as dp  # noqa: E402
+
 
 T = TypeVar("T")
 
@@ -88,6 +95,8 @@ class DashComponentsFactory:
             self.components[class_name] = getattr(px, class_name)
         elif hasattr(dbc, class_name):
             self.components[class_name] = getattr(dbc, class_name)
+        elif hasattr(dp, class_name):
+            self.components[class_name] = getattr(dp, class_name)
         else:
             raise ImportError(
                 f"Cannot import `{class_name}` from `dash.html`, `dash.dcc` or `plotly.express`"

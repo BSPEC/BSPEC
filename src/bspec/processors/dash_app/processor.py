@@ -45,6 +45,13 @@ except ImportError:
     dynamic_module_install(module_name, requirements_dict)
     import dash_bootstrap_components as dbc  # noqa: E402
 
+try:
+    import dash_pivottable as dp  # noqa: E402
+except ImportError:
+    module_name = "dash-pivottable"
+    dynamic_module_install(module_name, requirements_dict)
+    import dash_pivottable as dp  # noqa: E402
+
 
 #########################
 #  Define some Systems: #
