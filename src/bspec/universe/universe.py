@@ -48,19 +48,16 @@ def universe(
     galaxy_config: List = data["galaxy"]
 
     # Load pipelines:
-
     returned_val = recursive_pipeline_read(
         data=data,
         processor_plugins=processor_plugins,
         galaxy_config=galaxy_config,
     )
-    processor_plugins.update(returned_val["processor_plugins"])
+    processor_plugins.update(returned_val["all_processor_plugins"])
     galaxy_config = returned_val["galaxy_config"]
 
     # load the processor plugins
     # currently using plugin_core loader which may need to change in the future
-    print("Register processor_plugins:")
-    print(processor_plugins)
     plugins_loader.load_plugins(processor_plugins)
 
     # Highlight Duplicate World Names
@@ -68,7 +65,7 @@ def universe(
 
     # set up ECS requirements for global registration
     entities: Dict = {}
-    processors: Dict[str, Dict[str, Union[Callable, int]]] = {}
+    processors: Dict[str, Dict[str, Dict[str, Union[Callable, int]]]] = {}
     components: Set[str] = set()
 
     for world in galaxy_config:
@@ -103,20 +100,24 @@ def universe(
 
         # create the processors
         for processor in world["processors"]:
-            processors[processor["processor_name"]] = {
-                "processor": processor_factory.create(processor),
+            world_processors = processors.get(world_name, None)
+            if world_processors is None:
+                processors[world_name] = {}
+
+            processors[world_name][processor["processor_name"]] = {
+                "processor": processor_factory.create(world_name, processor),
                 "priority": processor["priority"],
             }
 
         # [galaxy[world_name].add_processor(processor,priority = processor.priority['priority']) for processor in processors]
-        for processor_name in processors:
+        for processor_name in processors[world_name]:
             galaxy[world_name].add_processor(
-                processors[processor_name]["processor"],
-                priority=processors[processor_name]["priority"],
+                processors[world_name][processor_name]["processor"],
+                priority=processors[world_name][processor_name]["priority"],
             )
-            processor_components = processors[processor_name]["processor"].__dict__[
-                "components"
-            ]
+            processor_components = processors[world_name][processor_name][
+                "processor"
+            ].__dict__["components"]
 
             for component in processor_components:
                 components.add(component.__dict__["__module__"])
@@ -139,8 +140,8 @@ def universe(
         print("galaxy: ", galaxy)
         print("----------------------")
         print()
-        print()
         print(f"Entry World: {starting_world}")
+        print()
         print()
         galaxy[starting_world].process()
     except KeyboardInterrupt:
