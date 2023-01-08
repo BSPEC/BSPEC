@@ -78,7 +78,7 @@ class PD_DropNA(Processor):
             pd_input_dropna_kwargs = vars(pd_input_dropna)
             pd_dataframes.dataframe_2 = pd_dataframes.dataframe_1.copy()
             pd_dataframes.dataframe_2 = pd_dataframes.dataframe_2.dropna(
-                pd_input_dropna_kwargs
+                **pd_input_dropna_kwargs
             )
 
             if runtime_debug_print.runtime_debug_flag is True:
