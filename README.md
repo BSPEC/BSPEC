@@ -1,5 +1,5 @@
 # BSPEC
-> BSPEC: A python based Plugin, Entity Component System (ECS) architecture designed with Business Specifications in mind. This package allows you to easily set up and use existing systems and components. Write custom systems and components that can be dynamically loaded. Its minimal dependencies and extensions make it ideal for projects that use Python 3.
+> BSPEC is a Python-based Entity Component System (ECS) architecture designed for Business Specs. It allows users to construct dynamically loaded existing systems and components and easily set up and use custom ones, with requirements dynamically imported. Its minimal dependencies and extensions make it ideal for projects that use Python 3.
 
 ## Notes:
 This is part of the natural progression from the Flask-BDA project found here: [https://github.com/RyanJulyan/Flask-BDA](https://github.com/RyanJulyan/Flask-BDA) and should be considered it's successor.
